@@ -16,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/EHB-MCT/web2-groupproject-backend-team-britt-liese-rebecca/issues"
   },
-  "homepage": "https://github.com/EHB-MCT/web2-groupproject-backend-team-britt-liese-rebecca#readme"
+  "homepage": "https://github.com/EHB-MCT/web2-groupproject-backend-team-britt-liese-rebecca#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1"
+  }
 }
