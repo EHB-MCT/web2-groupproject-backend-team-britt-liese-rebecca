@@ -1,4 +1,4 @@
-const credentials = require("./credentials.js");
+//const credentials = require("./credentials.js");
 const {
     MongoClient
 } = require("mongodb")
@@ -10,7 +10,7 @@ const port = process.env.PORT || 1337;
 // extra variable & info fr mongodb to work
 const url = `mongodb+srv://teamwork:britt@cluster0.fkenc.mongodb.net/teamwork?retryWrites=true&w=majority`;
 const client = new MongoClient(url);
-console.log(credentials)
+//console.log(credentials)
 
 // The database to use
 
