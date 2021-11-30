@@ -2,6 +2,7 @@
 const {
     MongoClient
 } = require("mongodb")
+const cors = require ("cors");
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
@@ -18,7 +19,7 @@ const dbName = "teamwork";
 
 app.use(express.static('public'))
 app.use(bodyParser.json());
-
+app.use(cors());
 
 //get route -> every route has at least 2 parameters at least: the url & the calback function with request & response
 app.get('/', (req, res) => {
