@@ -63,8 +63,8 @@ app.get('/challenges', async (req, res) => {
 
 app.post('/saveData', async (req, res) => {
     //can only send data in the body 
-    console.log(req.body);
-    res.send('ok');
+    /* console.log(req.body);
+    res.send('ok'); */
 
     if (!req.body.name || !req.body.points || !req.body.course || !req.body.session) {
         res.status(400).send('bad result, missing name, points, course or session');
@@ -98,7 +98,8 @@ app.post('/saveData', async (req, res) => {
         let insertResult = await col.insertOne(newChallenge);
 
         //send back succes message
-        res.status(201).send('challenge successfully saved with name:' + req.body.name);
+
+        res.status(201).json(newChallenge);
         return;
 
     } catch (error) {
@@ -111,6 +112,30 @@ app.post('/saveData', async (req, res) => {
         await client.close();
     }
 });
+
+/* app.delete('/deleteData', async (req, res) => {
+    try {
+        //read the file
+        //connect to the database
+        await client.connect();
+        console.log("Connected correctly to server");
+        const db = client.db(dbName);
+        const col = db.collection("challenges");  // Use the collection "challenges"
+     
+        await col.findOneAndDelete({req.body.name}).toArray();  // Find document & convert it to an array
+    
+        
+    } catch (err) {
+        console.log('error');
+        res.status(500).send({
+            error: 'an error has occured',
+            value: error
+        });
+    } finally {
+        await client.close();
+    }
+}) */
+
 
 // create server with 'port' as fisrt variable & callback function as the second variable
 app.listen(port, () => {
