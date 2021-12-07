@@ -116,6 +116,10 @@ app.post('/challenges', async (req, res) => {
 });
 
 app.delete('/challenges/:id', async (req, res) => {
+    if (!req.params.id || req.params.id.length != 24 ) {
+        res.status(400).send('bad result, missing id or id is not 24 chars long');
+        return;
+    }
     try {
         //read the file
         //connect to the database
@@ -126,13 +130,15 @@ app.delete('/challenges/:id', async (req, res) => {
      
         // Create a query for a challenge to delete
         const query = { _id: ObjectId(req.params.id) };
+        const message = { deleted: "Challenge deleted"
+        }
 
         // Deleting the challenge
             const result = await col.deleteOne(query);
-        if (result.deletedCount === 1) {
+        if (result.deletedCount === 1 ) {
         res
             .status(200)
-            .send(`Challenge with id "${req.params.id}" successfully deleted.`);
+            .send(message);
         } else {
         res
             .status(404)
@@ -148,6 +154,55 @@ app.delete('/challenges/:id', async (req, res) => {
         await client.close();
     }
 })
+
+/* // Update a challenge
+app.put("/challenges/:id", async (req, res) => {
+    // Validation
+    if ( !req.body.name || !req.body.points || !req.body.session || !req.body.course) {
+      res.status(400).send("Bad request: Missing name, points, session or course");
+      return;
+    }
+    try {
+        //read the file
+        //connect to the database
+        await client.connect();
+        console.log("Connected correctly to server");
+        const db = client.db(dbName);
+        const col = db.collection("challenges");  // Use the collection "challenges"
+
+      // Create a query for a challenge to update
+      const query = { _id: ObjectId(req.query.id) };
+  
+      // This option instructs the method to create a document if no documents match the filter
+      const options = { upsert: true };
+  
+      // Create a document that sets the plot of the movie
+      const updateChal = {
+        $set: {
+          name: req.body.name,
+          points: req.body.points,
+          session: req.body.session,
+          course: req.body.course,
+        },
+      };
+  
+      // Updating the challenge
+      const result = await col.updateOne(query, updateChal, options);
+  
+      // Send back success message
+      res
+        .status(201)
+        .send(`Challenge with id "${req.query.id}" successfully updated.`);
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({
+        error: "something went wrong",
+        value: error,
+      });
+    } finally {
+      await client.close();
+    }
+  }); */
 
 
 // create server with 'port' as fisrt variable & callback function as the second variable
