@@ -130,8 +130,7 @@ app.delete('/challenges/:id', async (req, res) => {
      
         // Create a query for a challenge to delete
         const query = { _id: ObjectId(req.params.id) };
-        const message = { deleted: "Challenge deleted"
-        }
+        const message = { deleted: "Challenge deleted"}
 
         // Deleting the challenge
             const result = await col.deleteOne(query);
@@ -155,11 +154,14 @@ app.delete('/challenges/:id', async (req, res) => {
     }
 })
 
-/* // Update a challenge
+// Update a challenge
 app.put("/challenges/:id", async (req, res) => {
-    // Validation
-    if ( !req.body.name || !req.body.points || !req.body.session || !req.body.course) {
-      res.status(400).send("Bad request: Missing name, points, session or course");
+    // check for body data
+    const error = {error: "Bad request",
+                   value: "Missing name, points, session or course"}
+
+    if ( !req.body.name || !req.body.points || !req.body.course) {
+      res.status(400).send(error);
       return;
     }
     try {
@@ -171,28 +173,22 @@ app.put("/challenges/:id", async (req, res) => {
         const col = db.collection("challenges");  // Use the collection "challenges"
 
       // Create a query for a challenge to update
-      const query = { _id: ObjectId(req.query.id) };
-  
-      // This option instructs the method to create a document if no documents match the filter
-      const options = { upsert: true };
-  
-      // Create a document that sets the plot of the movie
+      const query = { _id: ObjectId(req.params.id) };
+      const message = { deleted: "Challenge updated"}
+
+      // update a challenge
       const updateChal = {
-        $set: {
           name: req.body.name,
           points: req.body.points,
           session: req.body.session,
           course: req.body.course,
-        },
       };
-  
+      console.log(query, updateChal);
       // Updating the challenge
-      const result = await col.updateOne(query, updateChal, options);
+      const result = await col.updateOne(query, {$set: updateChal});
   
       // Send back success message
-      res
-        .status(201)
-        .send(`Challenge with id "${req.query.id}" successfully updated.`);
+      res.status(201).send(result);
     } catch (error) {
       console.log(error);
       res.status(500).send({
@@ -202,7 +198,7 @@ app.put("/challenges/:id", async (req, res) => {
     } finally {
       await client.close();
     }
-  }); */
+  });
 
 
 // create server with 'port' as fisrt variable & callback function as the second variable
