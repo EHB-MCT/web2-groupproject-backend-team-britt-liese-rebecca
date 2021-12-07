@@ -29,35 +29,88 @@ app.get('/', (req, res) => {
 app.get('/challenges', async (req, res) => {
     //get data from mongo en send naar res
     // Demo op github (ex3)
-    //this is the same but data on small level without mongodb
+    //this is the same but data on small level without mongodb database
     /*    let data = {
            name: "Challenge1",
            course: "webII",
            points: 1000
        }
        res.send(data) */
+
     try {
+        //read the file
         //connect to the database
         await client.connect();
         console.log("Connected correctly to server");
 
         const db = client.db(dbName);
-        // Use the collection "people"
-        const col = db.collection("challenges");
-        // Find document
-        const myDoc = await col.find({}).toArray();
-
-        // Print to the console
-        console.log(myDoc);
-        //Send back the data with the response
-        res.status(200).send(myDoc);
+       
+        const col = db.collection("challenges");  // Use the collection "challenges"
+     
+        const myDoc = await col.find({}).toArray();  // Find document & convert it to an array
+        console.log(myDoc);   // Print to the console
+        res.status(200).send(myDoc); //Send back the data with the response
     } catch (err) {
-        console.log(err.stack);
+        console.log('error');
+        res.status(500).send({
+            error: 'an error has occured',
+            value: error
+        });
     } finally {
         await client.close();
     }
 })
 
+app.post('/saveData', async (req, res) => {
+    //can only send data in the body 
+    console.log(req.body);
+    res.send('ok');
+
+    if (!req.body.name || !req.body.points || !req.body.course || !req.body.session) {
+        res.status(400).send('bad result, missing name, points, course or session');
+        return;
+    }
+
+    try {
+        //connect with database
+        await client.connect();
+        console.log("Connected correctly to server");
+        // retrieve the collection data
+        const db = client.db(dbName);
+        const col = db.collection("challenges");  // Use the collection "challenges"
+        
+      //validation for double challenges 
+      const myDoc = await col.find({name: req.body.name});  // Find document & convert it to an array
+      if (myDoc){
+        res.status(400).send('Bad request: boardgame already exists with name' + req.body.name);
+        return; //cause we don't want the code to continue
+        }
+
+        //save new challenge
+        let newChallenge = {
+            name: req.body.name,
+            points: req.body.points,
+            course: req.body.course,
+            session: req.body.session
+        }
+        
+        //insert into database
+        let insertResult = await col.insertOne(newChallenge);
+
+        //send back succes message
+        res.status(201).send('challenge successfully saved with name:' + req.body.name);
+        return;
+
+    } catch (error) {
+        console.log('error');
+        res.status(500).send({
+            error: 'an error has occured',
+            value: error
+        });
+    }finally{
+        await client.close();
+    }
+});
 
 // create server with 'port' as fisrt variable & callback function as the second variable
 app.listen(port, () => {
