@@ -1,12 +1,13 @@
 //const credentials = require("./credentials.js");
 const {
-    MongoClient
+    MongoClient, ObjectId
 } = require("mongodb")
 const cors = require ("cors");
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const port = process.env.PORT || 1337;
+
 
 // extra variable & info fr mongodb to work
 const url = `mongodb+srv://teamwork:britt@cluster0.fkenc.mongodb.net/teamwork?retryWrites=true&w=majority`;
@@ -114,7 +115,7 @@ app.post('/challenges', async (req, res) => {
     }
 });
 
-/* app.delete('/challenges/:id', async (req, res) => {
+app.delete('/challenges/:id', async (req, res) => {
     try {
         //read the file
         //connect to the database
@@ -123,9 +124,20 @@ app.post('/challenges', async (req, res) => {
         const db = client.db(dbName);
         const col = db.collection("challenges");  // Use the collection "challenges"
      
-        await col.findOneAndDelete({req.body.name}).toArray();  // Find document & convert it to an array
-    
-        
+        // Create a query for a challenge to delete
+        const query = { _id: ObjectId(req.params.id) };
+
+        // Deleting the challenge
+            const result = await col.deleteOne(query);
+        if (result.deletedCount === 1) {
+        res
+            .status(200)
+            .send(`Challenge with id "${req.params.id}" successfully deleted.`);
+        } else {
+        res
+            .status(404)
+            .send("No documents matched the query. Deleted 0 documents.");
+        }
     } catch (err) {
         console.log('error');
         res.status(500).send({
@@ -135,7 +147,7 @@ app.post('/challenges', async (req, res) => {
     } finally {
         await client.close();
     }
-}) */
+})
 
 
 // create server with 'port' as fisrt variable & callback function as the second variable
