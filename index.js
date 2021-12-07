@@ -80,7 +80,7 @@ app.post('/challenges', async (req, res) => {
         const col = db.collection("challenges");  // Use the collection "challenges"
         
       //validation for double challenges 
-      const myDoc = await col.find({name: req.body.name});  // Find document 
+      const myDoc = await col.findOne({name: req.body.name});  // Find document 
       if (myDoc){
         res.status(400).send('Bad request: boardgame already exists with name' + req.body.name);
         return; //cause we don't want the code to continue
