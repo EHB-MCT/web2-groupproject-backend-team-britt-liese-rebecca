@@ -61,7 +61,7 @@ app.get('/challenges', async (req, res) => {
     }
 })
 
-app.post('/saveData', async (req, res) => {
+app.post('/challenges', async (req, res) => {
     //can only send data in the body 
     /* console.log(req.body);
     res.send('ok'); */
@@ -80,7 +80,7 @@ app.post('/saveData', async (req, res) => {
         const col = db.collection("challenges");  // Use the collection "challenges"
         
       //validation for double challenges 
-      const myDoc = await col.find({name: req.body.name});  // Find document & convert it to an array
+      const myDoc = await col.find({name: req.body.name});  // Find document 
       if (myDoc){
         res.status(400).send('Bad request: boardgame already exists with name' + req.body.name);
         return; //cause we don't want the code to continue
@@ -100,6 +100,7 @@ app.post('/saveData', async (req, res) => {
         //send back succes message
 
         res.status(201).json(newChallenge);
+        console.log(newChallenge)
         return;
 
     } catch (error) {
@@ -113,7 +114,7 @@ app.post('/saveData', async (req, res) => {
     }
 });
 
-/* app.delete('/deleteData', async (req, res) => {
+/* app.delete('/challenges/:id', async (req, res) => {
     try {
         //read the file
         //connect to the database
